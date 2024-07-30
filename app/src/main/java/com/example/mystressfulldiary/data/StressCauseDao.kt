@@ -4,7 +4,6 @@ import androidx.room.Insert
 import androidx.room.Update
 import androidx.room.Query
 import androidx.room.Dao
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StressCauseDao {
@@ -16,4 +15,7 @@ interface StressCauseDao {
 
     @Update
     suspend fun update(cause: StressCause)
+
+    @Query("DELETE FROM `stress-causes`")
+    suspend fun deleteAll()
 }

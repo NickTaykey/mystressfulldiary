@@ -23,8 +23,14 @@ import kotlinx.datetime.todayIn
 
 data class StressEntry(
     val cause: String,
-    var intensity: Float,
-    val date: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+    var intensity: Int,
+    val date: LocalDate,
+    val datestr: String = date.toString(),
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 )
+
+data class StressDay(
+    val date: LocalDate,
+    var intensity: Float
+);
