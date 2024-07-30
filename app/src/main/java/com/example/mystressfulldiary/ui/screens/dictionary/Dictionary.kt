@@ -1,10 +1,12 @@
 package com.example.mystressfulldiary.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +35,14 @@ import com.example.mystressfulldiary.data.AppViewModel
 import com.example.mystressfulldiary.data.StressCause
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 fun getDefaultColor(): FloatArray {
     val hsv = floatArrayOf(0f, 0f, 0f)
@@ -43,30 +53,48 @@ fun getDefaultColor(): FloatArray {
 }
 
 @Composable
-fun Dictionary(viewModel: AppViewModel) {
+fun Dictionary(viewModel: AppViewModel, navController: NavController) {
     val causes = remember { mutableStateListOf<StressCause>() }
-
-    LaunchedEffect(Unit) {
-        viewModel.causes.observeForever{ newCauses -> causes.addAll(
-            newCauses.subList(causes.size, newCauses.size)
-        )}
-    }
-
-    var name by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(""); };
     var hsv by remember {
         val defaultColor = getDefaultColor();
         mutableStateOf(
             Triple(defaultColor[0], defaultColor[1], defaultColor[2])
-        )
+        );
+    };
+
+    LaunchedEffect(Unit) {
+        Log.d("color", hsv.toString());
+        viewModel
+            .causes
+            .observeForever { newCauses ->
+                causes.addAll(
+                    newCauses.subList(causes.size, newCauses.size)
+                )
+            }
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = "Your own stress dictionary",
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            )
+        );
+        Spacer(modifier = Modifier.height(16.dp).fillMaxWidth());
+        Text(
+            text = "Define the causes of your stress",
+            style = TextStyle(
+                fontWeight = FontWeight.Thin,
+                fontSize = 16.sp,
+            )
+        );
+        Spacer(modifier = Modifier.height(16.dp).fillMaxWidth());
         Column {
             TextField(
                 value = name,
@@ -92,7 +120,8 @@ fun Dictionary(viewModel: AppViewModel) {
                 onClick = {
                     viewModel.addCause(
                         StressCause(
-                            name, "${hsv.first},${hsv.second},${hsv.third}"
+                            name,
+                            "${hsv.first}-${hsv.second}-${hsv.third}",
                         )
                     );
                     name = ""
@@ -115,11 +144,10 @@ fun Dictionary(viewModel: AppViewModel) {
                         .fillMaxWidth()
                         .padding(8.dp)
                 ) {
-
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val codes = item.color.split(',').map { v -> v.toFloat() }
+                        val codes = item.color.split('-').map { v -> v.toFloat() }
                         Box(
                             modifier = Modifier
                                 .size(50.dp)
