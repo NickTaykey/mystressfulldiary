@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.mystressfulldiary"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -98,7 +98,15 @@ dependencies {
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
+    implementation("io.github.serpro69:kotlin-faker:1.12.0")
 
     implementation("io.github.boguszpawlowski.composecalendar:composecalendar:1.2.0")
     implementation("io.github.boguszpawlowski.composecalendar:kotlinx-datetime:1.2.0")
+
+    implementation("co.yml:ycharts:2.1.0")
+    implementation("com.chargemap.compose:numberpicker:1.0.3")
+    implementation("io.github.bytebeats:compose-charts:0.2.1")
+    implementation("com.github.MahmoudIbrahim3:android-compose-charts:1.2.2")
+
+    implementation("br.com.devsrsouza.compose.icons:font-awesome:1.1.0")
 }
