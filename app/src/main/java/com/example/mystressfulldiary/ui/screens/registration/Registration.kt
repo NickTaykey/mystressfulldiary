@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,14 +26,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mystressfulldiary.data.AppViewModel
 import com.example.mystressfulldiary.data.StressCause
 import com.example.mystressfulldiary.data.StressEntry
 
 @Composable
-fun Registration(viewModel: AppViewModel) {
+fun Registration(viewModel: AppViewModel, navController: NavController) {
     val causes = remember { mutableStateListOf<StressCause>() }
     val entries = remember { mutableStateListOf<StressEntry>() }
 
@@ -45,11 +50,10 @@ fun Registration(viewModel: AppViewModel) {
                 )
             }
         viewModel
-            .entries
+            .todaysEntries
             .observeForever { newEntries ->
-                entries.addAll(
-                    newEntries.subList(entries.size, newEntries.size)
-                )
+                entries.clear();
+                entries.addAll(newEntries);
             }
     }
 
@@ -57,15 +61,25 @@ fun Registration(viewModel: AppViewModel) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "How do you feel today?",
-                style = MaterialTheme.typography.headlineLarge,
-            )
-            Text(entries.size.toString())
-            Spacer(modifier = Modifier.height(8.dp))
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
+            );
+            Spacer(modifier = Modifier.height(16.dp).fillMaxWidth());
+            Text(
+                text = "Your well-being deserves your attention!",
+                style = TextStyle(
+                    fontWeight = FontWeight.Thin,
+                    fontSize = 16.sp,
+                )
+            );
+            Spacer(modifier = Modifier.height(16.dp).fillMaxWidth());
             val stressLabels = mapOf(
                 0 to "No stress",
                 1 to "Light stress",
@@ -86,7 +100,7 @@ fun Registration(viewModel: AppViewModel) {
                 Column {
                     entries.forEach { entry ->
                         var selectedValue by remember {
-                            mutableFloatStateOf(entry.intensity)
+                            mutableFloatStateOf(entry.intensity.toFloat())
                         }
                         OutlinedCard(
                             colors = CardDefaults.cardColors(
@@ -128,7 +142,7 @@ fun Registration(viewModel: AppViewModel) {
                                     value = selectedValue,
                                     onValueChange = { value ->
                                         selectedValue = value
-                                        entry.intensity = value;
+                                        entry.intensity = value.toInt();
                                         viewModel.updateEntry(entry);
                                     },
                                     valueRange = 0f..4f,
@@ -142,7 +156,8 @@ fun Registration(viewModel: AppViewModel) {
                 }
             }
         }
-    } else {
+    }
+    else {
         Column(
             modifier = Modifier.fillMaxWidth().fillMaxHeight(),
         ) {
